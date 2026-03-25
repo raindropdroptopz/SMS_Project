@@ -1,0 +1,29 @@
+header {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 16px;
+}
+
+nav a {
+  color: white;
+  margin-right: 12px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  padding: 24px;
+  background-color: var(--background);
+  min-height: 70vh;
+}
+
+footer {
+  background-color: #e5e7eb;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+}

@@ -1,0 +1,57 @@
+.table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.th{
+  text-align:left;
+  padding:14px;
+  background:#f1f5f9;
+  border-bottom:1px solid #e2e8f0;
+}
+
+.td{
+  padding:14px;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.empty{
+  padding:24px;
+  text-align:center;
+  color:#64748b;
+}
+
+.actionGroup{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.viewBtn,
+.editBtn,
+.deleteBtn{
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.viewBtn{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.editBtn{
+  background:#fef3c7;
+  color:#a16207;
+}
+
+.deleteBtn{
+  background:#fee2e2;
+  color:#b91c1c;
+}

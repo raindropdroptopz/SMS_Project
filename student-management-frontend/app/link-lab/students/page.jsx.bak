@@ -1,0 +1,33 @@
+import Link from "next/link";
+
+export default function StudentPage() {
+  const students = [
+    { id: "1", name: "Alice"},
+    { id: "2", name: "Bob"},
+    { id: "3", name: "Chai"}
+  ];
+
+  return (
+    <main>
+      <h1>Students (Link Lab)</h1>
+
+      <ul>
+        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+          <Link href="/link-lab/student?program=SE">Program: SE</Link>
+          <Link href="/link-lab/student?program=CS">Program: CS</Link>
+          <Link href="/link-lab/students">ALL</Link>
+        </div>
+
+        {students.map((s) => (
+          <li key={s.id}>
+            <Link href={`/link-lab/students/${s.id}`}>
+              {s.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <p><Link href="/link-lab">กลับหน้า Lab</Link></p>
+    </main>
+  )
+}

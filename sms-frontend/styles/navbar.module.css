@@ -1,0 +1,24 @@
+.navbar{
+  height:72px;
+  background:#203e97;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+}
+
+.brand{
+  font-size:28px;
+  font-weight:bold;
+}
+
+.button{
+  background:#ffffff;
+  color:#203e97;
+  border:none;
+  border-radius:10px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:bold;
+}
