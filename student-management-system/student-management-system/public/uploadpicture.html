@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Upload Student Photo</title>
+  </head>
+  <body>
+    <h1>Upload Student Photo</h1>
+
+    <form action="/students/2/photo" method="post" enctype="multipart/form-data">
+      <input type="file" name="photo" accept="image/*" />
+      <button type="submit">Upload</button>
+    </form>
+  </body>
+</html>

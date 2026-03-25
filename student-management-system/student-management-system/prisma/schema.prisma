@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model attendance_records {
+  attendance_id   Int                       @id @default(autoincrement()) @db.UnsignedInt
+  section_id      Int                       @db.UnsignedInt
+  student_id      Int                       @db.UnsignedInt
+  attendance_date DateTime                  @db.Date
+  status          attendance_records_status
+  note            String?                   @db.VarChar(255)
+  class_sections  class_sections            @relation(fields: [section_id], references: [section_id], onDelete: NoAction, onUpdate: NoAction, map: "attendance_records_ibfk_1")
+  students        students                  @relation(fields: [student_id], references: [student_id], onDelete: NoAction, onUpdate: NoAction, map: "attendance_records_ibfk_2")
+
+  @@index([section_id], map: "section_id")
+  @@index([student_id], map: "student_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model class_sections {
+  section_id         Int                  @id @default(autoincrement()) @db.UnsignedInt
+  course_id          Int                  @db.UnsignedInt
+  semester_id        Int                  @db.UnsignedInt
+  section_no         String               @db.VarChar(10)
+  instructor_id      Int                  @db.UnsignedInt
+  classroom          String?              @db.VarChar(50)
+  schedule_info      String?              @db.VarChar(255)
+  capacity           Int?                 @db.UnsignedInt
+  attendance_records attendance_records[]
+  courses            courses              @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "class_sections_ibfk_1")
+  semesters          semesters            @relation(fields: [semester_id], references: [semester_id], onDelete: NoAction, onUpdate: NoAction, map: "class_sections_ibfk_2")
+  instructors        instructors          @relation(fields: [instructor_id], references: [instructor_id], onDelete: NoAction, onUpdate: NoAction, map: "class_sections_ibfk_3")
+  enrollments        enrollments[]
+
+  @@index([course_id], map: "course_id")
+  @@index([instructor_id], map: "instructor_id")
+  @@index([semester_id], map: "semester_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model courses {
+  course_id      Int              @id @default(autoincrement()) @db.UnsignedInt
+  department_id  Int              @db.UnsignedInt
+  course_code    String           @unique(map: "course_code") @db.VarChar(20)
+  course_name_th String           @db.VarChar(255)
+  course_name_en String?          @db.VarChar(255)
+  credit         Decimal          @db.Decimal(3, 1)
+  lecture_hour   Int?             @db.TinyInt
+  lab_hour       Int?             @db.TinyInt
+  description    String?          @db.Text
+  class_sections class_sections[]
+  departments    departments      @relation(fields: [department_id], references: [department_id], onDelete: NoAction, onUpdate: NoAction, map: "courses_ibfk_1")
+
+  @@index([department_id], map: "department_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model departments {
+  department_id Int        @id @default(autoincrement()) @db.UnsignedInt
+  code          String     @unique(map: "code") @db.VarChar(10)
+  name_th       String     @db.VarChar(255)
+  name_en       String?    @db.VarChar(255)
+  courses       courses[]
+  programs      programs[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model enrollments {
+  enrollment_id  Int                 @id @default(autoincrement()) @db.UnsignedInt
+  student_id     Int                 @db.UnsignedInt
+  section_id     Int                 @db.UnsignedInt
+  enroll_date    DateTime?           @db.Date
+  status         enrollments_status? @default(enrolled)
+  final_score    Decimal?            @db.Decimal(5, 2)
+  final_grade    String?             @db.VarChar(2)
+  students       students            @relation(fields: [student_id], references: [student_id], onDelete: NoAction, onUpdate: NoAction, map: "enrollments_ibfk_1")
+  class_sections class_sections      @relation(fields: [section_id], references: [section_id], onDelete: NoAction, onUpdate: NoAction, map: "enrollments_ibfk_2")
+
+  @@index([section_id], map: "section_id")
+  @@index([student_id], map: "student_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model instructors {
+  instructor_id  Int                 @id @default(autoincrement()) @db.UnsignedInt
+  employee_no    String              @unique(map: "employee_no") @db.VarChar(20)
+  prefix         String?             @db.VarChar(20)
+  first_name_th  String              @db.VarChar(100)
+  last_name_th   String              @db.VarChar(100)
+  first_name_en  String?             @db.VarChar(100)
+  last_name_en   String?             @db.VarChar(100)
+  email          String?             @db.VarChar(255)
+  phone          String?             @db.VarChar(20)
+  status         instructors_status? @default(active)
+  class_sections class_sections[]
+  users          users[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model programs {
+  program_id    Int            @id @default(autoincrement()) @db.UnsignedInt
+  department_id Int            @db.UnsignedInt
+  code          String         @unique(map: "code") @db.VarChar(20)
+  name_th       String         @db.VarChar(255)
+  name_en       String?        @db.VarChar(255)
+  level         programs_level
+  departments   departments    @relation(fields: [department_id], references: [department_id], onDelete: NoAction, onUpdate: NoAction, map: "programs_ibfk_1")
+  students      students[]
+
+  @@index([department_id], map: "department_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model semesters {
+  semester_id    Int              @id @default(autoincrement()) @db.UnsignedInt
+  academic_year  Int              @db.SmallInt
+  term           Int              @db.TinyInt
+  start_date     DateTime?        @db.Date
+  end_date       DateTime?        @db.Date
+  class_sections class_sections[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model students {
+  student_id         Int                  @id @default(autoincrement()) @db.UnsignedInt
+  student_no         String               @unique(map: "student_no") @db.VarChar(20)
+  program_id         Int                  @db.UnsignedInt
+  citizen_id         String?              @db.VarChar(20)
+  prefix             String?              @db.VarChar(20)
+  first_name_th      String               @db.VarChar(100)
+  last_name_th       String               @db.VarChar(100)
+  first_name_en      String?              @db.VarChar(100)
+  last_name_en       String?              @db.VarChar(100)
+  gender             students_gender?
+  date_of_birth      DateTime?            @db.Date
+  email              String?              @db.VarChar(255)
+  phone              String?              @db.VarChar(20)
+  status             students_status?     @default(active)
+  attendance_records attendance_records[]
+  enrollments        enrollments[]
+  programs           programs             @relation(fields: [program_id], references: [program_id], onDelete: NoAction, onUpdate: NoAction, map: "students_ibfk_1")
+  users              users[]
+
+  @@index([program_id], map: "program_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  user_id       Int          @id @default(autoincrement()) @db.UnsignedInt
+  username      String       @unique(map: "username") @db.VarChar(50)
+  password_hash String       @db.VarChar(255)
+  role          users_role
+  student_id    Int?         @db.UnsignedInt
+  instructor_id Int?         @db.UnsignedInt
+  is_active     Boolean?     @default(true)
+  last_login    DateTime?    @db.DateTime(0)
+  created_at    DateTime?    @default(now()) @db.DateTime(0)
+  updated_at    DateTime?    @default(now()) @db.DateTime(0)
+  students      students?    @relation(fields: [student_id], references: [student_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_1")
+  instructors   instructors? @relation(fields: [instructor_id], references: [instructor_id], onDelete: NoAction, onUpdate: NoAction, map: "users_ibfk_2")
+
+  @@index([instructor_id], map: "instructor_id")
+  @@index([student_id], map: "student_id")
+}
+
+enum users_role {
+  student
+  instructor
+  admin
+  staff
+}
+
+enum attendance_records_status {
+  present
+  absent
+  late
+  excused
+}
+
+enum enrollments_status {
+  enrolled
+  dropped
+  withdrawn
+  completed
+}
+
+enum programs_level {
+  Bachelor
+  Master
+  Doctoral
+}
+
+enum instructors_status {
+  active
+  inactive
+}
+
+enum students_gender {
+  M
+  F
+  Other
+}
+
+enum students_status {
+  active
+  inactive
+  graduated
+  suspended
+}
